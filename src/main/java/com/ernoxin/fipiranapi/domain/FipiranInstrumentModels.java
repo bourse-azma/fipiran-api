@@ -37,6 +37,7 @@ public final class FipiranInstrumentModels {
 
     public record InstrumentSnapshotResult(
             String instrumentCode,
+            String lastTradeAt,
             JsonNode instrument,
             JsonNode transaction,
             List<JsonNode> bestLimits,

@@ -1,6 +1,7 @@
 package com.ernoxin.fipiranapi.mapper;
 
 import com.ernoxin.fipiranapi.common.util.FipiranMapperSupport;
+import com.ernoxin.fipiranapi.common.util.JalaliDateTimeFormatter;
 import com.ernoxin.fipiranapi.domain.FipiranInstrumentModels;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
@@ -45,13 +46,30 @@ public class FipiranInstrumentMapper {
                 ? root.path("item").get(0)
                 : root.path("item");
 
+        JsonNode transactionNode = firstItem.path("instrumentTransaction");
+
         return new FipiranInstrumentModels.InstrumentSnapshotResult(
                 insCode,
+                resolveSnapshotLastTradeAt(transactionNode),
                 firstItem.path("instrument"),
-                firstItem.path("instrumentTransaction"),
+                transactionNode,
                 support.list(firstItem.path("instrument5BestLimits")),
                 support.list(firstItem.path("instrumentClientTypes"))
         );
+    }
+
+    private String resolveSnapshotLastTradeAt(JsonNode transactionNode) {
+        String transactionDate = support.text(transactionNode, "transactionDate");
+        Integer hEven = support.integerOrNull(transactionNode, "hEven");
+        if (transactionDate.isBlank()) {
+            return null;
+        }
+
+        if (hEven != null && hEven > 0) {
+            return JalaliDateTimeFormatter.fromIsoDateAndHeven(transactionDate, hEven);
+        }
+
+        return JalaliDateTimeFormatter.normalizeDisplayDateTime(transactionDate);
     }
 
     public FipiranInstrumentModels.EfficiencyResult toEfficiencyResult(String insCode, String date, JsonNode root) {

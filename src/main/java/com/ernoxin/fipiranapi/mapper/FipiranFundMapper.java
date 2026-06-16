@@ -1,6 +1,7 @@
 package com.ernoxin.fipiranapi.mapper;
 
 import com.ernoxin.fipiranapi.common.util.FipiranMapperSupport;
+import com.ernoxin.fipiranapi.common.util.JalaliDateTimeFormatter;
 import com.ernoxin.fipiranapi.domain.FipiranFundModels;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,7 @@ public class FipiranFundMapper {
     }
 
     private FipiranFundModels.FundSummary toFundSummary(JsonNode n) {
+        String date = support.text(n, "date");
         return new FipiranFundModels.FundSummary(
                 firstExistingText(n, "regNo", "registrationNumber"),
                 support.text(n, "name"),
@@ -64,7 +66,8 @@ public class FipiranFundMapper {
                 support.dbl(n, "cancelNav"),
                 support.dbl(n, "statisticalNav"),
                 support.dbl(n, "dividendIntervalPeriod"),
-                support.text(n, "date"),
+                date,
+                JalaliDateTimeFormatter.normalizeDisplayDateTime(date),
                 support.dbl(n, "netAsset"),
                 support.dbl(n, "investedUnits"),
                 support.textList(n.path("websiteAddress")),
@@ -88,6 +91,8 @@ public class FipiranFundMapper {
     }
 
     private FipiranFundModels.FundDetails toFundDetailsItem(JsonNode item) {
+        String lastModificationTime = support.text(item, "lastModificationTime");
+        String date = support.text(item, "date");
         return new FipiranFundModels.FundDetails(
                 firstExistingText(item, "regNo", "registrationNumber"),
                 support.text(item, "registrationNumber"),
@@ -96,8 +101,9 @@ public class FipiranFundMapper {
                 support.dbl(item, "fundSize"),
                 support.text(item, "fundType"),
                 support.text(item, "executiveManager"),
-                support.text(item, "lastModificationTime"),
-                support.text(item, "date"),
+                lastModificationTime,
+                date,
+                JalaliDateTimeFormatter.firstNonBlank(lastModificationTime, date),
                 support.dbl(item, "dailyEfficiency"),
                 support.dbl(item, "weeklyEfficiency"),
                 support.dbl(item, "monthlyEfficiency"),

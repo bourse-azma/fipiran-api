@@ -17,6 +17,28 @@ public class FipiranMapperSupport {
         return node.path(field).asInt(0);
     }
 
+    public Integer integerOrNull(JsonNode node, String field) {
+        JsonNode selected = node.path(field);
+        if (selected.isMissingNode() || selected.isNull()) {
+            return null;
+        }
+
+        if (selected.isNumber()) {
+            return selected.asInt();
+        }
+
+        String text = selected.asText("").trim();
+        if (text.isEmpty()) {
+            return null;
+        }
+
+        try {
+            return Integer.parseInt(text);
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
     public long lng(JsonNode node, String field) {
         return node.path(field).asLong(0L);
     }
