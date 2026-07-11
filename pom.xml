@@ -43,9 +43,6 @@
                     <excludes>
                         <exclude>**/._*.java</exclude>
                     </excludes>
-                    <testExcludes>
-                        <testExclude>**/._*.java</testExclude>
-                    </testExcludes>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -64,18 +61,6 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>**/._*</exclude>
-                    </excludes>
-                    <systemPropertyVariables>
-                        <spring.classformat.ignore>true</spring.classformat.ignore>
-                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>
